@@ -1,0 +1,15 @@
+<RCC>
+    <qresource prefix="/">
+        <file alias="AND">resources/and.svg</file>
+        <file alias="INPUT">resources/input.svg</file>
+        <file alias="NAND">resources/nand.svg</file>
+        <file alias="NOR">resources/nor.svg</file>
+        <file alias="NOT">resources/not.svg</file>
+        <file alias="OR">resources/or.svg</file>
+        <file alias="OUTPUT">resources/output.svg</file>
+        <file alias="XOR">resources/xor.svg</file>
+        <file alias="POINT">resources/point.svg</file>
+        <file alias="LINE">resources/line.svg</file>
+        <file alias="SAVE">resources/save.svg</file>
+    </qresource>
+</RCC>

@@ -1,0 +1,295 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>938</width>
+    <height>598</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>MainWindow</string>
+  </property>
+  <widget class="QWidget" name="centralWidget">
+   <layout class="QHBoxLayout" name="horizontalLayout">
+    <item>
+     <widget class="CircuitViewer" name="cv" native="true">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="minimumSize">
+       <size>
+        <width>200</width>
+        <height>200</height>
+       </size>
+      </property>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QMenuBar" name="menuBar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>938</width>
+     <height>25</height>
+    </rect>
+   </property>
+  </widget>
+  <widget class="QToolBar" name="gatesToolbar">
+   <property name="acceptDrops">
+    <bool>false</bool>
+   </property>
+   <property name="movable">
+    <bool>true</bool>
+   </property>
+   <property name="iconSize">
+    <size>
+     <width>35</width>
+     <height>30</height>
+    </size>
+   </property>
+   <property name="toolButtonStyle">
+    <enum>Qt::ToolButtonIconOnly</enum>
+   </property>
+   <property name="floatable">
+    <bool>false</bool>
+   </property>
+   <attribute name="toolBarArea">
+    <enum>TopToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak">
+    <bool>false</bool>
+   </attribute>
+   <addaction name="actionINPUT"/>
+   <addaction name="actionOUTPUT"/>
+   <addaction name="actionAND"/>
+   <addaction name="actionOR"/>
+   <addaction name="actionNOT"/>
+   <addaction name="actionNAND"/>
+   <addaction name="actionNOR"/>
+   <addaction name="actionXOR"/>
+  </widget>
+  <widget class="QStatusBar" name="statusBar"/>
+  <widget class="QToolBar" name="pointerToolbar">
+   <property name="windowTitle">
+    <string>toolBar</string>
+   </property>
+   <attribute name="toolBarArea">
+    <enum>TopToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak">
+    <bool>false</bool>
+   </attribute>
+   <addaction name="actionPOINT"/>
+   <addaction name="actionLINE"/>
+   <addaction name="actionSAVE"/>
+  </widget>
+  <action name="actionAND">
+   <property name="icon">
+    <iconset resource="resource.qrc">
+     <normaloff>:/AND</normaloff>:/AND</iconset>
+   </property>
+   <property name="text">
+    <string>AND</string>
+   </property>
+   <property name="toolTip">
+    <string>AND</string>
+   </property>
+  </action>
+  <action name="actionINPUT">
+   <property name="icon">
+    <iconset resource="resource.qrc">
+     <normaloff>:/INPUT</normaloff>:/INPUT</iconset>
+   </property>
+   <property name="text">
+    <string>INPUT</string>
+   </property>
+  </action>
+  <action name="actionOUTPUT">
+   <property name="icon">
+    <iconset resource="resource.qrc">
+     <normaloff>:/OUTPUT</normaloff>:/OUTPUT</iconset>
+   </property>
+   <property name="text">
+    <string>OUTPUT</string>
+   </property>
+   <property name="toolTip">
+    <string>OUTPUT</string>
+   </property>
+  </action>
+  <action name="actionOR">
+   <property name="icon">
+    <iconset resource="resource.qrc">
+     <normaloff>:/OR</normaloff>:/OR</iconset>
+   </property>
+   <property name="text">
+    <string>OR</string>
+   </property>
+   <property name="toolTip">
+    <string>OR</string>
+   </property>
+  </action>
+  <action name="actionNOR">
+   <property name="icon">
+    <iconset resource="resource.qrc">
+     <normaloff>:/NOR</normaloff>:/NOR</iconset>
+   </property>
+   <property name="text">
+    <string>NOR</string>
+   </property>
+   <property name="toolTip">
+    <string>NOR</string>
+   </property>
+  </action>
+  <action name="actionNOT">
+   <property name="icon">
+    <iconset resource="resource.qrc">
+     <normaloff>:/NOT</normaloff>:/NOT</iconset>
+   </property>
+   <property name="text">
+    <string>NOT</string>
+   </property>
+   <property name="toolTip">
+    <string>NOT</string>
+   </property>
+  </action>
+  <action name="actionXOR">
+   <property name="icon">
+    <iconset resource="resource.qrc">
+     <normaloff>:/XOR</normaloff>:/XOR</iconset>
+   </property>
+   <property name="text">
+    <string>XOR</string>
+   </property>
+   <property name="toolTip">
+    <string>XOR</string>
+   </property>
+  </action>
+  <action name="actionNAND">
+   <property name="icon">
+    <iconset resource="resource.qrc">
+     <normaloff>:/NAND</normaloff>:/NAND</iconset>
+   </property>
+   <property name="text">
+    <string>NAND</string>
+   </property>
+   <property name="toolTip">
+    <string>NAND</string>
+   </property>
+  </action>
+  <action name="actionPOINT">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="resource.qrc">
+     <normaloff>:/POINT</normaloff>:/POINT</iconset>
+   </property>
+   <property name="text">
+    <string>POINT</string>
+   </property>
+   <property name="toolTip">
+    <string>Select</string>
+   </property>
+  </action>
+  <action name="actionLINE">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="resource.qrc">
+     <normaloff>:/LINE</normaloff>:/LINE</iconset>
+   </property>
+   <property name="text">
+    <string>LINE</string>
+   </property>
+  </action>
+  <action name="actionSAVE">
+   <property name="icon">
+    <iconset resource="resource.qrc">
+     <normaloff>:/SAVE</normaloff>:/SAVE</iconset>
+   </property>
+   <property name="text">
+    <string>SAVE</string>
+   </property>
+   <property name="toolTip">
+    <string>Save</string>
+   </property>
+  </action>
+ </widget>
+ <layoutdefault spacing="6" margin="11"/>
+ <customwidgets>
+  <customwidget>
+   <class>CircuitViewer</class>
+   <extends>QWidget</extends>
+   <header>circuitviewer.h</header>
+   <container>1</container>
+   <slots>
+    <slot>addItem(QAction*)</slot>
+    <slot>setMode(QAction*)</slot>
+    <slot>record()</slot>
+   </slots>
+  </customwidget>
+ </customwidgets>
+ <resources>
+  <include location="resource.qrc"/>
+ </resources>
+ <connections>
+  <connection>
+   <sender>gatesToolbar</sender>
+   <signal>actionTriggered(QAction*)</signal>
+   <receiver>cv</receiver>
+   <slot>addItem(QAction*)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>45</x>
+     <y>51</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>480</x>
+     <y>256</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>pointerToolbar</sender>
+   <signal>actionTriggered(QAction*)</signal>
+   <receiver>cv</receiver>
+   <slot>setMode(QAction*)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>512</x>
+     <y>46</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>520</x>
+     <y>196</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionSAVE</sender>
+   <signal>triggered()</signal>
+   <receiver>cv</receiver>
+   <slot>record()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>468</x>
+     <y>323</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+</ui>
