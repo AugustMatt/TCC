@@ -49,8 +49,10 @@ void CircuitViewer::play(void){
             //Nesse caso espera-se que SHOWIMAGE so tenha um conector de entrada
             if (!scene->selectedCircuitItem->inputConnectors.isEmpty()) {
                 if(!scene->selectedCircuitItem->inputConnectors[0]->src->image.empty()){
-                    cv::namedWindow("Imagem", cv::WINDOW_NORMAL); // Cria uma janela com tamanho personalizado
-                    cv::imshow("Imagem Selecionada", scene->selectedCircuitItem->inputConnectors[0]->src->image); // Exibe a imagem na janela
+                    QString windowName = "Imagem_" + QString::number(reinterpret_cast<std::uintptr_t>(scene->selectedCircuitItem));
+                    std::string windowNameStd = windowName.toStdString();
+                    cv::namedWindow(windowNameStd.c_str(), cv::WINDOW_NORMAL); // Cria uma janela com tamanho personalizado
+                    cv::imshow(windowNameStd.c_str(), scene->selectedCircuitItem->inputConnectors[0]->src->image); // Exibe a imagem na janela
                     cv::waitKey(0); // Espera até que uma tecla seja pressionada
                 } else {
                     qDebug() << "Sem imagem para mostrar";
