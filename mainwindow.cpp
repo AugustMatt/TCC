@@ -9,6 +9,7 @@ MainWindow::MainWindow(QWidget *parent) :
     pointTypeGroup = new QActionGroup(this); // Cria um novo grupo de ações
     pointTypeGroup->addAction(ui->actionPOINT); // Adiciona a ação POINT ao grupo de ações
     pointTypeGroup->addAction(ui->actionLINE); // Adiciona a ação LINE ao grupo de ações
+    pointTypeGroup->addAction(ui->actionPLAY);
     ui->actionPOINT->setChecked(true); // Define a ação POINT como selecionada por padrão
 }
 

@@ -11,5 +11,8 @@
         <file alias="POINT">resources/point.svg</file>
         <file alias="LINE">resources/line.svg</file>
         <file alias="SAVE">resources/save.svg</file>
+        <file alias="LOADIMAGE">resources/loadImage.svg</file>
+        <file alias="SHOWIMAGE">resources/showImage.svg</file>
+        <file alias="PLAY">resources/play.svg</file>
     </qresource>
 </RCC>

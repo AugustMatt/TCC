@@ -14,8 +14,11 @@ public:
     explicit CircuitScene(QObject *parent = 0); // Construtor da classe CircuitScene
     bool isItemChange(int type); // Verifica se houve alteração em um tipo de item específico
     int record(QString filename); // Grava a cena em um arquivo especificado
+    CircuitItem* selectedCircuitItem = nullptr;
 
 signals: // Definição de sinais da classe
+    void itemClicked(CircuitItem* item);
+
 
 public slots: // Definição de slots da classe
     void mousePressEvent(QGraphicsSceneMouseEvent *event); // Slot para lidar com eventos de clique do mouse
@@ -23,6 +26,8 @@ public slots: // Definição de slots da classe
     void mouseReleaseEvent(QGraphicsSceneMouseEvent *event); // Slot para lidar com eventos de liberação do mouse
     void setMode(QString s); // Slot para definir o modo de operação da cena
     void add(QString s); // Slot para adicionar um item à cena
+    void handleItemClick(CircuitItem* item);
+
 
 private:
     CircuitItem *item; // Ponteiro para o item do circuito

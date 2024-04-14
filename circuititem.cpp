@@ -3,6 +3,8 @@
 #include <QtGui> // Inclui o cabeçalho para elementos gráficos do Qt
 #include <QtSvg> // Inclui o cabeçalho para trabalhar com SVG
 #include <iostream> // Inclui o cabeçalho para entrada e saída padrão
+#include <QGraphicsScene>
+#include <QDebug>
 
 CircuitItem::CircuitItem(QString _itemType){ // Implementação do construtor da classe CircuitItem
     itemType = _itemType; // Inicializa o tipo do item com o valor passado como parâmetro
@@ -11,8 +13,8 @@ CircuitItem::CircuitItem(QString _itemType){ // Implementação do construtor da
     itemName = itemType; // Inicializa o nome do item com o tipo do item
     rec = rec+itemType; // Concatena o tipo do item à string com dois pontos
     svgrenderer = new QSvgRenderer(rec); // Cria um novo renderizador SVG com o nome do arquivo SVG
-    width = 65; // Define a largura do item como 65 pixels
-    height = 65; // Define a altura do item como 65 pixels
+    width =70; // Define a largura do item como 65 pixels
+    height = 70; // Define a altura do item como 65 pixels
     rect.setRect(0,0,width,height); // Define o retângulo delimitador do item
 
     // Define as flags do item para permitir movimentação, seleção e envio de alterações de geometria
@@ -31,18 +33,40 @@ void CircuitItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *optio
     QFontMetrics fm(foo); // Obtém as métricas da fonte
     textHeightinPixels = fm.height(); // Obtém a altura do texto
     textRect.setHeight(height+textHeightinPixels); // Ajusta a altura do retângulo de texto
-    if(itemType.compare(QString("INPUT"))==0 || itemType.compare(QString("OUTPUT"))==0){ // Verifica se o tipo do item é INPUT ou OUTPUT
+
+    if(
+        itemType.compare(QString("INPUT"))==0
+        || itemType.compare(QString("OUTPUT"))==0
+        || itemType.compare(QString("LOADIMAGE"))==0
+        || itemType.compare(QString("SHOWIMAGE"))==0)
+    { // Verifica se o tipo do item é INPUT ou OUTPUT
         rect=textRect; // Atualiza o retângulo do item para incluir o texto
     }
+
     QSize size(svgrenderer->defaultSize()); // Obtém o tamanho padrão do SVG
     size.scale(imageRect.size(), Qt::KeepAspectRatio); // Escala o tamanho para manter a proporção
     imageRect.setSize(size); // Define o tamanho da imagem
     imageRect.moveTo(imageRect.x(), imageRect.y()); // Move a imagem para a posição correta
+
     if(svgrenderer->isValid() && svgrenderer != NULL){ // Verifica se o renderizador SVG é válido
         svgrenderer->render(painter, imageRect); // Renderiza o SVG no pintor na posição especificada
     }
-    if(itemType.compare(QString("INPUT"))==0 || itemType.compare(QString("OUTPUT"))==0){ // Verifica se o tipo do item é INPUT ou OUTPUT
+
+    // Texto esta bugando
+    if(
+        itemType.compare(QString("INPUT"))==0
+        || itemType.compare(QString("OUTPUT"))==0
+        || itemType.compare(QString("LOADIMAGE"))==0
+        || itemType.compare(QString("SHOWIMAGE"))==0)
+    { // Verifica se o tipo do item é INPUT ou OUTPUT
         painter->drawText(textRect,Qt::AlignBottom|Qt::AlignHCenter,itemName); // Desenha o texto no retângulo de texto
+    }
+
+    // Adicionar lógica para desenhar a borda azul quando selecionado
+    if (isSelected()) {
+        painter->setPen(Qt::blue);
+        painter->setBrush(Qt::NoBrush);
+        painter->drawRect(boundingRect());
     }
 }
 
@@ -59,7 +83,11 @@ int CircuitItem::nInputs(void){ // Implementação do método para obter o núme
 }
 
 QRectF CircuitItem::boundingRect() const{ // Implementação do método para obter o retângulo delimitador
-    if(itemType.compare(QString("INPUT"))==0 || itemType.compare(QString("OUTPUT"))==0){ // Verifica se o tipo do item é INPUT ou OUTPUT
+    if(
+        itemType.compare(QString("INPUT"))==0
+        || itemType.compare(QString("OUTPUT"))==0
+        || itemType.compare(QString("LOADIMAGE"))==0
+        || itemType.compare(QString("SHOWIMAGE"))==0){ // Verifica se o tipo do item é INPUT ou OUTPUT
         return QRectF(0,0,width,height+textHeightinPixels); // Retorna o retângulo que inclui o texto
     }
     return QRectF(0,0,width,height); // Retorna o retângulo sem o texto

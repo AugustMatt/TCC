@@ -19,6 +19,9 @@ public slots: // Definição de slots da classe
     void addItem(QAction *action); // Slot para adicionar um item ao circuito
     void setMode(QAction *action); // Slot para definir o modo de operação do circuito
     void record(void); // Slot para gravar o circuito
+    void play(void); // Slot para executar ações
+
+    void openImageFileDialog(); // Slot para selecionar uma imagem (LOADIMAGE)
 
 private:
     CircuitScene *scene; // Ponteiro para a cena do circuito

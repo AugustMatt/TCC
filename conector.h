@@ -28,6 +28,9 @@ public:
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *item, QWidget *widget); // Método para desenhar o item
     void updatePosition(); // Método para atualizar a posição do item
 
+    // fazer gets para esses caras posteriormente
+    CircuitItem *src, *dst; // Ponteiros para os itens de origem e destino
+
 protected:
            // void mousePressEvent(QGraphicsSceneMouseEvent *event);
            // void mouseMoveEvent(QGraphicsSceneMouseEvent *event);
@@ -35,7 +38,6 @@ protected:
 
 private:
     int x, y; // Variáveis para coordenadas
-    CircuitItem *src, *dst; // Ponteiros para os itens de origem e destino
     qreal radius, dstWidth, dstHeight; // Variáveis para o raio e dimensões do destino
     QColor color, lineColor, circleColor; // Cores para o item
     QPointF srcCenter, dstCenter; // Pontos centrais dos itens de origem e destino

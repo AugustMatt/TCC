@@ -4,6 +4,7 @@
 #include <QGraphicsItem> // Inclui o cabeçalho para itens gráficos do Qt
 #include <QString> // Inclui o cabeçalho para manipulação de strings
 #include <QtSvg> // Inclui o cabeçalho para trabalhar com SVG
+#include <opencv2/opencv.hpp>
 
 class QGraphicsSvgItem; // Declaração antecipada da classe QGraphicsSvgItem
 class Connector; // Declaração antecipada da classe Connector
@@ -25,8 +26,14 @@ public:
     void addOutputConnector(Connector *connector); // Adiciona um conector de saída ao item
     int nInputs(); // Retorna o número de entradas do item
 
-private:
+    //fazer funções de get posterioemente para esses
     QString itemType; // Tipo do item
+    QList<Connector *> inputConnectors, outputConnectors; // Lista de conectores de entrada e saída do item
+    // --
+
+    cv::Mat image; // Matriz de armazenamento da imagem (OpenCV)
+
+private:
     QString itemName; // Nome do item
     QSvgRenderer *svgrenderer; // Renderizador SVG
     QRect rect; // Retângulo do item
@@ -34,7 +41,7 @@ private:
     int id; // ID do item
     int textWidthinPixels; // Largura do texto em pixels
     int textHeightinPixels; // Altura do texto em pixels
-    QList<Connector *> inputConnectors, outputConnectors; // Lista de conectores de entrada e saída do item
+
 };
 
 #endif // CIRCUITITEM_H

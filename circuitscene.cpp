@@ -10,16 +10,39 @@ CircuitScene::CircuitScene(QObject *parent) :
     QGraphicsScene(parent) // Construtor da classe CircuitScene
 {
     mode = POINTER; // Inicializa o modo de operação como POINTER por padrão
+    connect(this, &CircuitScene::itemClicked, this, &CircuitScene::handleItemClick);
 }
 
 void CircuitScene::mousePressEvent(QGraphicsSceneMouseEvent *event){
+
     if (event->button() != Qt::LeftButton) // Verifica se o botão pressionado não é o botão esquerdo do mouse
         return;
+
     if(mode == LINE){ // Verifica se o modo de operação é LINE
         line = new QGraphicsLineItem(QLineF(event->scenePos(),event->scenePos())); // Cria um novo item de linha na cena
         addItem(line); // Adiciona o item de linha à cena
     }
+
+    // Verificar se um item foi clicado
+    QGraphicsItem* clickedItem = itemAt(event->scenePos(), QTransform());
+    if (clickedItem && clickedItem->type() == CircuitItem::Type) {
+        emit itemClicked(qgraphicsitem_cast<CircuitItem*>(clickedItem));
+    }
+
     QGraphicsScene::mousePressEvent(event); // Chama a implementação padrão do evento de pressionar o mouse na cena
+}
+
+void CircuitScene::handleItemClick(CircuitItem* item) {
+    if (item) {
+        // Desselecionar o item atualmente selecionado
+        if (selectedCircuitItem) {
+            selectedCircuitItem->setSelected(false);
+        }
+
+        // Selecionar o item clicado
+        item->setSelected(true);
+        selectedCircuitItem = item;
+    }
 }
 
 void CircuitScene::mouseMoveEvent(QGraphicsSceneMouseEvent *event){
@@ -33,13 +56,19 @@ void CircuitScene::mouseMoveEvent(QGraphicsSceneMouseEvent *event){
 }
 
 void CircuitScene::mouseReleaseEvent(QGraphicsSceneMouseEvent *event){
+
     if(line !=0 && mode == LINE){ // Verifica se existe uma linha em criação e o modo é LINE
+
         QList<QGraphicsItem *> startItems = items(line->line().p1()); // Obtém os itens no ponto inicial da linha
+
         if (startItems.count() && startItems.first() == line) // Verifica se o primeiro item é a própria linha
             startItems.removeFirst(); // Remove a linha da lista de itens iniciais
+
         QList<QGraphicsItem *> endItems = items(line->line().p2()); // Obtém os itens no ponto final da linha
+
         if (endItems.count() && endItems.first() == line) // Verifica se o primeiro item é a própria linha
             endItems.removeFirst(); // Remove a linha da lista de itens finais
+
         removeItem(line); // Remove a linha da cena
         delete line; // Libera a memória da linha
         line=0; // Define a linha como nula

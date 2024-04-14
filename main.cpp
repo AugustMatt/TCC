@@ -6,7 +6,7 @@
 
 int main(int argc, char *argv[])
 {
-    QApplication a(argc, argv); // Cria uma instância da classe QApplication para gerenciar a aplicação
+    QApplication a(argc, argv); // Cria uma instância da classe QAspplication para gerenciar a aplicação
 
     MainWindow w; // Cria uma instância da classe MainWindow, que é a janela principal da aplicação
 

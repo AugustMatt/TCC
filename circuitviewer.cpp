@@ -2,6 +2,11 @@
 #include "circuitscene.h" // Inclui o arquivo de cabeçalho da classe CircuitScene
 #include <iostream> // Inclui a biblioteca para entrada e saída padrão
 #include <QAction> // Inclui a biblioteca QAction para lidar com ações
+#include "circuititem.h"
+#include "conector.h"
+#include <opencv2/opencv.hpp>
+#include <QImage>
+#include <QDebug>
 
 CircuitViewer::CircuitViewer(QWidget *parent) :
     QGraphicsView(parent) // Construtor da classe CircuitViewer
@@ -29,4 +34,65 @@ void CircuitViewer::record(void){
     QString fileName = QFileDialog::getSaveFileName(this, tr("Save File")); // Abre um diálogo de salvar arquivo
     std::cout << "record:" << fileName.toStdString() << "\n"; // Exibe o nome do arquivo de gravação no console
     scene->record(fileName); // Grava o circuito no arquivo especificado
+}
+
+
+void CircuitViewer::play(void){
+
+    if (scene->selectedCircuitItem) {
+
+        if(scene->selectedCircuitItem->itemType.compare(QString("LOADIMAGE"))==0){
+            openImageFileDialog();
+        } else if(scene->selectedCircuitItem->itemType.compare(QString("SHOWIMAGE"))==0){
+
+
+            //Nesse caso espera-se que SHOWIMAGE so tenha um conector de entrada
+            if (!scene->selectedCircuitItem->inputConnectors.isEmpty()) {
+                if(!scene->selectedCircuitItem->inputConnectors[0]->src->image.empty()){
+                    cv::namedWindow("Imagem", cv::WINDOW_NORMAL); // Cria uma janela com tamanho personalizado
+                    cv::imshow("Imagem Selecionada", scene->selectedCircuitItem->inputConnectors[0]->src->image); // Exibe a imagem na janela
+                    cv::waitKey(0); // Espera até que uma tecla seja pressionada
+                } else {
+                    qDebug() << "Sem imagem para mostrar";
+                }
+            } else {
+                qDebug() << "Sem conexão no SHOWIMAGE";
+            }
+
+            // Exemplo de iteração sobre os conectores de entrada do bloco selecionado
+            /*
+            foreach (Connector *connector, scene->selectedCircuitItem->inputConnectors) {
+                if (connector->dst->itemType.compare(QString("SHOWIMAGE"))==0) {
+                    // O CircuitItem 'item' está conectado ao bloco ShowImage
+                    // Faça o que for necessário aqui
+                }
+            }
+            */
+
+
+        } else {
+            qDebug() << "Função não implementada.";
+        }
+
+    } else {
+        qDebug() << "Nenhum item selecionado.";
+    }
+}
+
+void CircuitViewer::openImageFileDialog() {
+    QString filePath = QFileDialog::getOpenFileName(this, "Selecionar Imagem", QDir::homePath(), "Imagens (*.png *.jpg *.bmp)");
+    if (!filePath.isEmpty()) {
+        QImage image(filePath);
+        if (!image.isNull()) {
+            // Converte a QImage para cv::Mat se necessário
+            cv::Mat matImage = cv::Mat(image.height(), image.width(), CV_8UC4, image.bits(), image.bytesPerLine()).clone();
+            scene->selectedCircuitItem->image = matImage;
+            qDebug() << "Imagem atualizada no LOADIMAGE";
+            //cv::namedWindow("Imagem Selecionada", cv::WINDOW_NORMAL); // Cria uma janela com tamanho personalizado
+            //cv::imshow("Imagem Selecionada", scene->selectedCircuitItem->image); // Exibe a imagem na janela
+            //cv::waitKey(0); // Espera até que uma tecla seja pressionada
+        } else {
+            qDebug() << "Erro ao carregar a imagem.";
+        }
+    }
 }
