@@ -143,3 +143,11 @@ void CircuitItem::setColorPattern(const QString &pattern)
 QList<Connector *> CircuitItem::getInputConnectors(){
     return inputConnectors;
 }
+
+void CircuitItem::removeInputConnector(Connector *connector) {
+    inputConnectors.removeOne(connector);
+}
+
+void CircuitItem::removeOutputConnector(Connector *connector) {
+    outputConnectors.removeOne(connector);
+}

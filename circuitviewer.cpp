@@ -36,7 +36,6 @@ void CircuitViewer::record(void){
     scene->record(fileName); // Grava o circuito no arquivo especificado
 }
 
-
 void CircuitViewer::play()
 {
     QList<QGraphicsItem*> selectedItemsList = scene->selectedItems();

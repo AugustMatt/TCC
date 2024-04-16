@@ -22,9 +22,8 @@ public slots: // Definição de slots da classe
     void mouseReleaseEvent(QGraphicsSceneMouseEvent *event) override; // Slot para lidar com eventos de liberação do mouse
     void setMode(QString s); // Slot para definir o modo de operação da cena
     void add(QString s); // Slot para adicionar um item à cena
-
     void mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event) override;
-
+    void keyPressEvent(QKeyEvent *event) override;
 
 private:
     CircuitItem *item; // Ponteiro para o item do circuito

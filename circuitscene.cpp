@@ -89,13 +89,41 @@ void CircuitScene::mouseReleaseEvent(QGraphicsSceneMouseEvent *event){
                 QGraphicsScene::mouseReleaseEvent(event); // Chama a implementação padrão do evento de liberação do mouse na cena
                 return;
             }
+
             // Cria um conector entre os itens startItem e endItem
             Connector *conector = new Connector(startItem, endItem);
-            startItem->addOutputConnector(conector); // Adiciona o conector à saída do startItem
-            endItem->addInputConnector(conector); // Adiciona o conector à entrada do endItem
-            conector->setZValue(-1000.0); // Define a ordem de renderização do conector
-            addItem(conector); // Adiciona o conector à cena
-            conector->updatePosition(); // Atualiza a posição do conector
+
+            // Verifica se o endItem é do tipo LoadImage, este não pode ter entradas
+            if (endItem->getType() == "LOADIMAGE") {
+                qDebug() << "O LoadImage não pode ter entradas.";
+                delete conector; // Remove o conector criado
+                QGraphicsScene::mouseReleaseEvent(event); // Chama a implementação padrão do evento de liberação do mouse na cena
+                return;
+            }
+
+            // Verifica se o endItem é do tipo ShowImage e já possui uma entrada conectada. So pode ter no maximo uma entrada
+            else if (endItem->getType() == "SHOWIMAGE" && endItem->getInputConnectors().size() >= 1) {
+                qDebug() << "Um ShowImage só pode ter no máximo uma entrada.";
+                delete conector; // Remove o conector criado
+                QGraphicsScene::mouseReleaseEvent(event); // Chama a implementação padrão do evento de liberação do mouse na cena
+                return;
+            }
+
+            // Verifica se o start item é do tipo ShowImage. Este não podera ser uma entrada
+            else if (startItem->getType() == "SHOWIMAGE") {
+                qDebug() << "Show image não pode ser um bloco de entrada";
+                delete conector; // Remove o conector criado
+                QGraphicsScene::mouseReleaseEvent(event); // Chama a implementação padrão do evento de liberação do mouse na cena
+                return;
+            } else {
+
+                // Realiza a conexão
+                startItem->addOutputConnector(conector); // Adiciona o conector à saída do startItem
+                endItem->addInputConnector(conector); // Adiciona o conector à entrada do endItem
+                conector->setZValue(-1000.0); // Define a ordem de renderização do conector
+                addItem(conector); // Adiciona o conector à cena
+                conector->updatePosition(); // Atualiza a posição do conector
+            }
         }
     }
     QGraphicsScene::mouseReleaseEvent(event); // Chama a implementação padrão do evento de liberação do mouse na cena
@@ -209,5 +237,41 @@ void CircuitScene::openSelectedItemSettingsWindow()
     else
     {
         qDebug() << "Logica de janela de opções ainda não implementada para esse bloco";
+    }
+}
+
+void CircuitScene::keyPressEvent(QKeyEvent *event) {
+
+    // Exclusão de bloco/conector
+    if (event->key() == Qt::Key_Delete) {
+
+        // Verifica se há algum conector selecionado para exclusão
+        foreach (QGraphicsItem *item, selectedItems()) {
+
+            if (item->type() == Connector::Type) {
+
+                Connector *connector = qgraphicsitem_cast<Connector *>(item);
+
+                if (connector) {
+
+                    // Remover o conector das listas de entrada e saída dos itens de origem e destino
+                    CircuitItem *srcItem = connector->getSrc();
+                    CircuitItem *dstItem = connector->getDst();
+
+                    if (srcItem)
+                        srcItem->removeOutputConnector(connector);
+
+                    if (dstItem)
+                        dstItem->removeInputConnector(connector);
+
+                    // Remover o conector da cena
+                    removeItem(connector);
+                    delete connector;
+                }
+            }
+        }
+    } else {
+        // Chama a implementação padrão para outros eventos de tecla
+        QGraphicsScene::keyPressEvent(event);
     }
 }

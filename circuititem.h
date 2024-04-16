@@ -26,6 +26,8 @@ public:
     void addOutputConnector(Connector *connector); // Adiciona um conector de saída ao item
     int nInputs(); // Retorna o número de entradas do item
     QList<Connector *> getInputConnectors(); // Retornar a lista de conectores de entrada
+    void removeInputConnector(Connector *connector);
+    void removeOutputConnector(Connector *connector);
 
     // Variaveis do openCv
     cv::Mat image; // Matriz de armazenamento da imagem (OpenCV)
