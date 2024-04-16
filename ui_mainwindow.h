@@ -177,7 +177,7 @@ public:
         pointerToolbar = new QToolBar(MainWindow);
         pointerToolbar->setObjectName("pointerToolbar");
         MainWindow->addToolBar(Qt::TopToolBarArea, pointerToolbar);
-
+        /*
         gatesToolbar->addAction(actionINPUT);
         gatesToolbar->addAction(actionOUTPUT);
         gatesToolbar->addAction(actionAND);
@@ -186,6 +186,7 @@ public:
         gatesToolbar->addAction(actionNAND);
         gatesToolbar->addAction(actionNOR);
         gatesToolbar->addAction(actionXOR);
+        */
         gatesToolbar->addAction(actionLoadImage);
         gatesToolbar->addAction(actionShowImage);
         pointerToolbar->addAction(actionPOINT);

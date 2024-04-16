@@ -21,18 +21,22 @@ signals: // Definição de sinais da classe
 
 
 public slots: // Definição de slots da classe
-    void mousePressEvent(QGraphicsSceneMouseEvent *event); // Slot para lidar com eventos de clique do mouse
-    void mouseMoveEvent(QGraphicsSceneMouseEvent *event); // Slot para lidar com eventos de movimento do mouse
-    void mouseReleaseEvent(QGraphicsSceneMouseEvent *event); // Slot para lidar com eventos de liberação do mouse
+    void mousePressEvent(QGraphicsSceneMouseEvent *event) override; // Slot para lidar com eventos de clique do mouse
+    void mouseMoveEvent(QGraphicsSceneMouseEvent *event) override; // Slot para lidar com eventos de movimento do mouse
+    void mouseReleaseEvent(QGraphicsSceneMouseEvent *event) override; // Slot para lidar com eventos de liberação do mouse
     void setMode(QString s); // Slot para definir o modo de operação da cena
     void add(QString s); // Slot para adicionar um item à cena
     void handleItemClick(CircuitItem* item);
+    void mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event) override;
 
 
 private:
     CircuitItem *item; // Ponteiro para o item do circuito
     QGraphicsLineItem *line; // Ponteiro para o item de linha gráfica
     int mode; // Variável para armazenar o modo de operação da cena
+
+private slots:
+    void openSelectedItemSettingsWindow();
 };
 
 #endif // CIRCUITSCENE_H

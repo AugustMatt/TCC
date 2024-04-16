@@ -17,6 +17,9 @@ CircuitItem::CircuitItem(QString _itemType){ // Implementação do construtor da
     height = 70; // Define a altura do item como 65 pixels
     rect.setRect(0,0,width,height); // Define o retângulo delimitador do item
 
+    // Inicialização padrão para ler imagem em RGG no load image
+    m_colorPattern = "RGB";
+
     // Define as flags do item para permitir movimentação, seleção e envio de alterações de geometria
     setFlag(QGraphicsItem::ItemIsMovable, true);
     setFlag(QGraphicsItem::ItemIsSelectable, true);
@@ -62,9 +65,14 @@ void CircuitItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *optio
         painter->drawText(textRect,Qt::AlignBottom|Qt::AlignHCenter,itemName); // Desenha o texto no retângulo de texto
     }
 
-    // Adicionar lógica para desenhar a borda azul quando selecionado
+    // Adicionar lógica para desenhar a borda azul quando selecionado    
     if (isSelected()) {
         painter->setPen(Qt::blue);
+        painter->setBrush(Qt::NoBrush);
+        painter->drawRect(boundingRect());
+    } else {
+
+        painter->setPen(Qt::transparent);
         painter->setBrush(Qt::NoBrush);
         painter->drawRect(boundingRect());
     }
@@ -121,4 +129,14 @@ QString CircuitItem::getType(){ // Implementação do método para obter o tipo 
 
 int CircuitItem::numberOfConnections(){ // Implementação do método para obter o número de conexões
     return inputConnectors.size(); // Retorna o tamanho da lista de conectores de entrada
+}
+
+QString CircuitItem::colorPattern() const
+{
+    return m_colorPattern;
+}
+
+void CircuitItem::setColorPattern(const QString &pattern)
+{
+    m_colorPattern = pattern;
 }

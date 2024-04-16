@@ -33,6 +33,10 @@ public:
 
     cv::Mat image; // Matriz de armazenamento da imagem (OpenCV)
 
+    // Tipo de cor para laod image
+    QString colorPattern() const;
+    void setColorPattern(const QString &pattern);
+
 private:
     QString itemName; // Nome do item
     QSvgRenderer *svgrenderer; // Renderizador SVG
@@ -41,6 +45,9 @@ private:
     int id; // ID do item
     int textWidthinPixels; // Largura do texto em pixels
     int textHeightinPixels; // Altura do texto em pixels
+
+    QString m_colorPattern;
+
 
 };
 

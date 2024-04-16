@@ -5,6 +5,12 @@
 #include <QtGui> // Inclui as bibliotecas gráficas do Qt
 #include <QtSvg> // Inclui a biblioteca para trabalhar com SVG
 #include <qgraphicssceneevent.h> // Inclui a biblioteca para eventos de cena gráfica
+#include <QDebug>
+#include <QDialog>
+#include <QVBoxLayout>
+#include <QLabel>
+#include <QComboBox>
+#include <QPushButton>
 
 CircuitScene::CircuitScene(QObject *parent) :
     QGraphicsScene(parent) // Construtor da classe CircuitScene
@@ -27,21 +33,28 @@ void CircuitScene::mousePressEvent(QGraphicsSceneMouseEvent *event){
     QGraphicsItem* clickedItem = itemAt(event->scenePos(), QTransform());
     if (clickedItem && clickedItem->type() == CircuitItem::Type) {
         emit itemClicked(qgraphicsitem_cast<CircuitItem*>(clickedItem));
+    } else {
+        clearSelection();
+        selectedCircuitItem=nullptr;
     }
 
     QGraphicsScene::mousePressEvent(event); // Chama a implementação padrão do evento de pressionar o mouse na cena
 }
 
 void CircuitScene::handleItemClick(CircuitItem* item) {
+
     if (item) {
+
         // Desselecionar o item atualmente selecionado
         if (selectedCircuitItem) {
             selectedCircuitItem->setSelected(false);
+            selectedCircuitItem=nullptr;
         }
 
-        // Selecionar o item clicado
+        // Selecionar o item clicados
         item->setSelected(true);
         selectedCircuitItem = item;
+
     }
 }
 
@@ -152,4 +165,61 @@ int CircuitScene::record(QString filename){
         }
     }
     // endItem is an OUTPUT with input already defined
+}
+
+void CircuitScene::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event)
+{
+    QGraphicsScene::mouseDoubleClickEvent(event);
+
+    // Verifique se há um item selecionado na cena
+    if (selectedCircuitItem){
+        openSelectedItemSettingsWindow();
+    } else {
+        qDebug() << "Nenhum elemento selecionado para o clique duplo";
+    }
+}
+
+void CircuitScene::openSelectedItemSettingsWindow()
+{
+
+    if (selectedCircuitItem->itemType.compare(QString("LOADIMAGE"))==0)
+    {
+        // Cria uma janela de diálogo para as configurações
+        QDialog dialog;
+        dialog.setWindowTitle("Configurações do Load Image");
+
+        // Adiciona um layout à janela
+        QVBoxLayout *layout = new QVBoxLayout(&dialog);
+
+        // Adiciona um rótulo e um seletor de cores ao layout
+        QLabel *colorLabel = new QLabel("Padrão de Cor:");
+        layout->addWidget(colorLabel);
+
+        QComboBox *colorSelector = new QComboBox;
+        colorSelector->addItem("RGB");
+        colorSelector->addItem("Escala de Cinza");
+        layout->addWidget(colorSelector);
+
+        // Adiciona um botão "OK" à janela
+        QPushButton *okButton = new QPushButton("OK");
+        layout->addWidget(okButton);
+
+        // Conecta o botão "OK" ao slot de aceitação da janela
+        connect(okButton, &QPushButton::clicked, &dialog, &QDialog::accept);
+
+        // Exibe a janela de configurações
+        if (dialog.exec() == QDialog::Accepted)
+        {
+            QString selectedPattern = colorSelector->currentText();
+            selectedCircuitItem->setColorPattern(selectedPattern);
+            emit itemClicked(selectedCircuitItem);
+        }
+
+
+    }
+    else
+    {
+        qDebug() << "Logica de janela de opções ainda não implementada para esse bloco";
+    }
+
 }

@@ -81,14 +81,34 @@ void CircuitViewer::play(void){
     }
 }
 
+// Função para converter QImage para cv::Mat
+cv::Mat QImageToCvMat(const QImage &image) {
+    cv::Mat matImage(image.height(), image.width(), CV_8UC4, const_cast<uchar*>(image.bits()), image.bytesPerLine());
+    return matImage.clone();
+}
+
 void CircuitViewer::openImageFileDialog() {
     QString filePath = QFileDialog::getOpenFileName(this, "Selecionar Imagem", QDir::homePath(), "Imagens (*.png *.jpg *.bmp)");
     if (!filePath.isEmpty()) {
         QImage image(filePath);
         if (!image.isNull()) {
-            // Converte a QImage para cv::Mat se necessário
-            cv::Mat matImage = cv::Mat(image.height(), image.width(), CV_8UC4, image.bits(), image.bytesPerLine()).clone();
-            scene->selectedCircuitItem->image = matImage;
+            // Verifica o padrão de cor selecionado
+            QString colorPattern = scene->selectedCircuitItem->colorPattern();
+            if (colorPattern == "RGB") {
+                // Converte a QImage para cv::Mat com padrão RGB
+                cv::Mat matImage = cv::Mat(image.height(), image.width(), CV_8UC3);
+                cv::cvtColor(QImageToCvMat(image), matImage, cv::COLOR_RGBA2RGB);
+                scene->selectedCircuitItem->image = matImage;
+            } else if (colorPattern == "Escala de Cinza") {
+                // Converte a QImage para cv::Mat em escala de cinza
+                cv::Mat matImage = cv::Mat(image.height(), image.width(), CV_8UC1);
+                cv::cvtColor(QImageToCvMat(image), matImage, cv::COLOR_RGBA2GRAY);
+                scene->selectedCircuitItem->image = matImage;
+            } else {
+                qDebug() << "Padrão de cor não suportado.";
+                return;
+            }
+
             qDebug() << "Imagem atualizada no LOADIMAGE";
             //cv::namedWindow("Imagem Selecionada", cv::WINDOW_NORMAL); // Cria uma janela com tamanho personalizado
             //cv::imshow("Imagem Selecionada", scene->selectedCircuitItem->image); // Exibe a imagem na janela
