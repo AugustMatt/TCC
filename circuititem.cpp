@@ -65,13 +65,12 @@ void CircuitItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *optio
         painter->drawText(textRect,Qt::AlignBottom|Qt::AlignHCenter,itemName); // Desenha o texto no retângulo de texto
     }
 
-    // Adicionar lógica para desenhar a borda azul quando selecionado    
+    // Adicionar lógica para desenhar a borda azul quando selecionado
     if (isSelected()) {
         painter->setPen(Qt::blue);
         painter->setBrush(Qt::NoBrush);
         painter->drawRect(boundingRect());
     } else {
-
         painter->setPen(Qt::transparent);
         painter->setBrush(Qt::NoBrush);
         painter->drawRect(boundingRect());

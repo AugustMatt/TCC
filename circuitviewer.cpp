@@ -37,45 +37,37 @@ void CircuitViewer::record(void){
 }
 
 
-void CircuitViewer::play(void){
+void CircuitViewer::play()
+{
+    QList<QGraphicsItem*> selectedItemsList = scene->selectedItems();
 
-    if (scene->selectedCircuitItem) {
+    if (!selectedItemsList.isEmpty()) {
+        QGraphicsItem *selectedItem = selectedItemsList.first(); // Obtém o primeiro item selecionado
+        CircuitItem *circuitItem = qgraphicsitem_cast<CircuitItem *>(selectedItem);
 
-        if(scene->selectedCircuitItem->itemType.compare(QString("LOADIMAGE"))==0){
-            openImageFileDialog();
-        } else if(scene->selectedCircuitItem->itemType.compare(QString("SHOWIMAGE"))==0){
-
-
-            //Nesse caso espera-se que SHOWIMAGE so tenha um conector de entrada
-            if (!scene->selectedCircuitItem->inputConnectors.isEmpty()) {
-                if(!scene->selectedCircuitItem->inputConnectors[0]->src->image.empty()){
-                    QString windowName = "Imagem_" + QString::number(reinterpret_cast<std::uintptr_t>(scene->selectedCircuitItem));
-                    std::string windowNameStd = windowName.toStdString();
-                    cv::namedWindow(windowNameStd.c_str(), cv::WINDOW_NORMAL); // Cria uma janela com tamanho personalizado
-                    cv::imshow(windowNameStd.c_str(), scene->selectedCircuitItem->inputConnectors[0]->src->image); // Exibe a imagem na janela
-                    cv::waitKey(0); // Espera até que uma tecla seja pressionada
+        if (circuitItem) {
+            if (circuitItem->itemType.compare(QString("LOADIMAGE")) == 0) {
+                openImageFileDialog();
+            } else if (circuitItem->itemType.compare(QString("SHOWIMAGE")) == 0) {
+                if (!circuitItem->inputConnectors.isEmpty()) {
+                    if (!circuitItem->inputConnectors[0]->src->image.empty()) {
+                        QString windowName = "Imagem_" + QString::number(reinterpret_cast<std::uintptr_t>(circuitItem));
+                        std::string windowNameStd = windowName.toStdString();
+                        cv::namedWindow(windowNameStd.c_str(), cv::WINDOW_NORMAL);
+                        cv::imshow(windowNameStd.c_str(), circuitItem->inputConnectors[0]->src->image);
+                        cv::waitKey(0);
+                    } else {
+                        qDebug() << "Sem imagem para mostrar";
+                    }
                 } else {
-                    qDebug() << "Sem imagem para mostrar";
+                    qDebug() << "Sem conexão no SHOWIMAGE";
                 }
             } else {
-                qDebug() << "Sem conexão no SHOWIMAGE";
+                qDebug() << "Função não implementada.";
             }
-
-            // Exemplo de iteração sobre os conectores de entrada do bloco selecionado
-            /*
-            foreach (Connector *connector, scene->selectedCircuitItem->inputConnectors) {
-                if (connector->dst->itemType.compare(QString("SHOWIMAGE"))==0) {
-                    // O CircuitItem 'item' está conectado ao bloco ShowImage
-                    // Faça o que for necessário aqui
-                }
-            }
-            */
-
-
         } else {
-            qDebug() << "Função não implementada.";
+            qDebug() << "Item selecionado não é um CircuitItem.";
         }
-
     } else {
         qDebug() << "Nenhum item selecionado.";
     }
@@ -88,33 +80,46 @@ cv::Mat QImageToCvMat(const QImage &image) {
 }
 
 void CircuitViewer::openImageFileDialog() {
-    QString filePath = QFileDialog::getOpenFileName(this, "Selecionar Imagem", QDir::homePath(), "Imagens (*.png *.jpg *.bmp)");
-    if (!filePath.isEmpty()) {
-        QImage image(filePath);
-        if (!image.isNull()) {
-            // Verifica o padrão de cor selecionado
-            QString colorPattern = scene->selectedCircuitItem->colorPattern();
-            if (colorPattern == "RGB") {
-                // Converte a QImage para cv::Mat com padrão RGB
-                cv::Mat matImage = cv::Mat(image.height(), image.width(), CV_8UC3);
-                cv::cvtColor(QImageToCvMat(image), matImage, cv::COLOR_RGBA2RGB);
-                scene->selectedCircuitItem->image = matImage;
-            } else if (colorPattern == "Escala de Cinza") {
-                // Converte a QImage para cv::Mat em escala de cinza
-                cv::Mat matImage = cv::Mat(image.height(), image.width(), CV_8UC1);
-                cv::cvtColor(QImageToCvMat(image), matImage, cv::COLOR_RGBA2GRAY);
-                scene->selectedCircuitItem->image = matImage;
-            } else {
-                qDebug() << "Padrão de cor não suportado.";
-                return;
-            }
+    QList<QGraphicsItem*> selectedItemsList = scene->selectedItems();
 
-            qDebug() << "Imagem atualizada no LOADIMAGE";
-            //cv::namedWindow("Imagem Selecionada", cv::WINDOW_NORMAL); // Cria uma janela com tamanho personalizado
-            //cv::imshow("Imagem Selecionada", scene->selectedCircuitItem->image); // Exibe a imagem na janela
-            //cv::waitKey(0); // Espera até que uma tecla seja pressionada
+    if (!selectedItemsList.isEmpty()) {
+        QGraphicsItem *selectedItem = selectedItemsList.first(); // Obtém o primeiro item selecionado
+        CircuitItem *circuitItem = qgraphicsitem_cast<CircuitItem *>(selectedItem);
+
+        if (circuitItem && circuitItem->itemType.compare(QString("LOADIMAGE")) == 0) {
+            QString filePath = QFileDialog::getOpenFileName(this, "Selecionar Imagem", QDir::homePath(), "Imagens (*.png *.jpg *.bmp)");
+            if (!filePath.isEmpty()) {
+                QImage image(filePath);
+                if (!image.isNull()) {
+                    // Verifica o padrão de cor selecionado
+                    QString colorPattern = circuitItem->colorPattern();
+                    if (colorPattern == "RGB") {
+                        // Converte a QImage para cv::Mat com padrão RGB
+                        cv::Mat matImage = cv::Mat(image.height(), image.width(), CV_8UC3);
+                        cv::cvtColor(QImageToCvMat(image), matImage, cv::COLOR_RGBA2RGB);
+                        circuitItem->image = matImage;
+                    } else if (colorPattern == "Escala de Cinza") {
+                        // Converte a QImage para cv::Mat em escala de cinza
+                        cv::Mat matImage = cv::Mat(image.height(), image.width(), CV_8UC1);
+                        cv::cvtColor(QImageToCvMat(image), matImage, cv::COLOR_RGBA2GRAY);
+                        circuitItem->image = matImage;
+                    } else {
+                        qDebug() << "Padrão de cor não suportado.";
+                        return;
+                    }
+
+                    qDebug() << "Imagem atualizada no LOADIMAGE";
+                    //cv::namedWindow("Imagem Selecionada", cv::WINDOW_NORMAL); // Cria uma janela com tamanho personalizado
+                    //cv::imshow("Imagem Selecionada", circuitItem->image); // Exibe a imagem na janela
+                    //cv::waitKey(0); // Espera até que uma tecla seja pressionada
+                } else {
+                    qDebug() << "Erro ao carregar a imagem.";
+                }
+            }
         } else {
-            qDebug() << "Erro ao carregar a imagem.";
+            qDebug() << "Item selecionado não é um LOADIMAGE.";
         }
+    } else {
+        qDebug() << "Nenhum item selecionado.";
     }
 }

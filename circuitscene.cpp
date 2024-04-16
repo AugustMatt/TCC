@@ -16,7 +16,6 @@ CircuitScene::CircuitScene(QObject *parent) :
     QGraphicsScene(parent) // Construtor da classe CircuitScene
 {
     mode = POINTER; // Inicializa o modo de operação como POINTER por padrão
-    connect(this, &CircuitScene::itemClicked, this, &CircuitScene::handleItemClick);
 }
 
 void CircuitScene::mousePressEvent(QGraphicsSceneMouseEvent *event){
@@ -29,33 +28,7 @@ void CircuitScene::mousePressEvent(QGraphicsSceneMouseEvent *event){
         addItem(line); // Adiciona o item de linha à cena
     }
 
-    // Verificar se um item foi clicado
-    QGraphicsItem* clickedItem = itemAt(event->scenePos(), QTransform());
-    if (clickedItem && clickedItem->type() == CircuitItem::Type) {
-        emit itemClicked(qgraphicsitem_cast<CircuitItem*>(clickedItem));
-    } else {
-        clearSelection();
-        selectedCircuitItem=nullptr;
-    }
-
     QGraphicsScene::mousePressEvent(event); // Chama a implementação padrão do evento de pressionar o mouse na cena
-}
-
-void CircuitScene::handleItemClick(CircuitItem* item) {
-
-    if (item) {
-
-        // Desselecionar o item atualmente selecionado
-        if (selectedCircuitItem) {
-            selectedCircuitItem->setSelected(false);
-            selectedCircuitItem=nullptr;
-        }
-
-        // Selecionar o item clicados
-        item->setSelected(true);
-        selectedCircuitItem = item;
-
-    }
 }
 
 void CircuitScene::mouseMoveEvent(QGraphicsSceneMouseEvent *event){
@@ -171,18 +144,37 @@ void CircuitScene::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event)
 {
     QGraphicsScene::mouseDoubleClickEvent(event);
 
-    // Verifique se há um item selecionado na cena
-    if (selectedCircuitItem){
+    // Verifica se há um item selecionado diretamente na cena
+    if (selectedItems().isEmpty()) {
+        qDebug() << "Nenhum elemento selecionado para o clique duplo";
+        return;
+    }
+
+    // Verifica se o item selecionado é do tipo CircuitItem
+    CircuitItem *selectedItem = qgraphicsitem_cast<CircuitItem *>(selectedItems().first());
+    if (selectedItem) {
         openSelectedItemSettingsWindow();
     } else {
-        qDebug() << "Nenhum elemento selecionado para o clique duplo";
+        qDebug() << "Elemento selecionado não é um CircuitItem para o clique duplo";
     }
 }
 
 void CircuitScene::openSelectedItemSettingsWindow()
 {
+    // Verifica se há um item selecionado na cena
+    if (selectedItems().isEmpty()) {
+        qDebug() << "Nenhum elemento selecionado para abrir as configurações";
+        return;
+    }
 
-    if (selectedCircuitItem->itemType.compare(QString("LOADIMAGE"))==0)
+    // Obtém o primeiro item selecionado
+    CircuitItem *selectedItem = qgraphicsitem_cast<CircuitItem *>(selectedItems().first());
+    if (!selectedItem) {
+        qDebug() << "Elemento selecionado não é um CircuitItem";
+        return;
+    }
+
+    if (selectedItem->itemType.compare(QString("LOADIMAGE")) == 0)
     {
         // Cria uma janela de diálogo para as configurações
         QDialog dialog;
@@ -211,15 +203,11 @@ void CircuitScene::openSelectedItemSettingsWindow()
         if (dialog.exec() == QDialog::Accepted)
         {
             QString selectedPattern = colorSelector->currentText();
-            selectedCircuitItem->setColorPattern(selectedPattern);
-            emit itemClicked(selectedCircuitItem);
+            selectedItem->setColorPattern(selectedPattern);
         }
-
-
     }
     else
     {
         qDebug() << "Logica de janela de opções ainda não implementada para esse bloco";
     }
-
 }

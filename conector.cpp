@@ -2,7 +2,8 @@
 #include "circuititem.h" // Inclui o cabeçalho da classe CircuitItem
 #include <QtGui> // Inclui o cabeçalho principal do Qt
 #include <iostream> // Inclui o cabeçalho para entrada e saída de dados
-
+#include <QGraphicsScene>
+#include <QDebug>
 // Implementação do construtor da classe Connector
 Connector::Connector(CircuitItem *_src, CircuitItem *_dst,
                      QGraphicsItem *parent, QGraphicsScene *scene)
@@ -54,10 +55,16 @@ void Connector::paint(QPainter *painter, const QStyleOptionGraphicsItem *option,
         return; // Retorna se houver colisão
 
     QPen myPen = pen(); // Obtém a caneta do pintor
-    myPen.setColor(lineColor); // Define a cor da caneta
     myPen.setWidth(3); // Define a largura da caneta
+    if (isSelected()) {
+        myPen.setColor(Qt::blue); // Define a cor da caneta como azul se o conector estiver selecionado
+    } else {
+        myPen.setColor(lineColor); // Define a cor da caneta normal
+    }
     painter->setPen(myPen); // Define a caneta no pintor
     painter->setBrush(circleColor); // Define o pincel no pintor
     painter->drawLine(centerLine); // Desenha a linha do conector
     painter->drawEllipse(borderPoint, radius, radius); // Desenha o círculo do conector
 }
+
+
