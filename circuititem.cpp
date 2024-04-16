@@ -139,3 +139,7 @@ void CircuitItem::setColorPattern(const QString &pattern)
 {
     m_colorPattern = pattern;
 }
+
+QList<Connector *> CircuitItem::getInputConnectors(){
+    return inputConnectors;
+}

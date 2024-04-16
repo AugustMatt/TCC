@@ -46,15 +46,15 @@ void CircuitViewer::play()
         CircuitItem *circuitItem = qgraphicsitem_cast<CircuitItem *>(selectedItem);
 
         if (circuitItem) {
-            if (circuitItem->itemType.compare(QString("LOADIMAGE")) == 0) {
+            if (circuitItem->getType().compare(QString("LOADIMAGE")) == 0) {
                 openImageFileDialog();
-            } else if (circuitItem->itemType.compare(QString("SHOWIMAGE")) == 0) {
-                if (!circuitItem->inputConnectors.isEmpty()) {
-                    if (!circuitItem->inputConnectors[0]->src->image.empty()) {
+            } else if (circuitItem->getType().compare(QString("SHOWIMAGE")) == 0) {
+                if (!circuitItem->getInputConnectors().isEmpty()) {
+                    if (!circuitItem->getInputConnectors()[0]->getSrc()->image.empty()) {
                         QString windowName = "Imagem_" + QString::number(reinterpret_cast<std::uintptr_t>(circuitItem));
                         std::string windowNameStd = windowName.toStdString();
                         cv::namedWindow(windowNameStd.c_str(), cv::WINDOW_NORMAL);
-                        cv::imshow(windowNameStd.c_str(), circuitItem->inputConnectors[0]->src->image);
+                        cv::imshow(windowNameStd.c_str(), circuitItem->getInputConnectors()[0]->getSrc()->image);
                         cv::waitKey(0);
                     } else {
                         qDebug() << "Sem imagem para mostrar";
@@ -86,7 +86,7 @@ void CircuitViewer::openImageFileDialog() {
         QGraphicsItem *selectedItem = selectedItemsList.first(); // Obtém o primeiro item selecionado
         CircuitItem *circuitItem = qgraphicsitem_cast<CircuitItem *>(selectedItem);
 
-        if (circuitItem && circuitItem->itemType.compare(QString("LOADIMAGE")) == 0) {
+        if (circuitItem && circuitItem->getType().compare(QString("LOADIMAGE")) == 0) {
             QString filePath = QFileDialog::getOpenFileName(this, "Selecionar Imagem", QDir::homePath(), "Imagens (*.png *.jpg *.bmp)");
             if (!filePath.isEmpty()) {
                 QImage image(filePath);

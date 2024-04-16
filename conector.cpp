@@ -67,4 +67,13 @@ void Connector::paint(QPainter *painter, const QStyleOptionGraphicsItem *option,
     painter->drawEllipse(borderPoint, radius, radius); // Desenha o círculo do conector
 }
 
+CircuitItem* Connector::getSrc(){
+    return src;
+}
+
+CircuitItem* Connector::getDst(){
+    return dst;
+}
+
+
 

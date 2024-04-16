@@ -27,9 +27,9 @@ public:
     QRectF boundingRect() const; // Método para obter o retângulo delimitador do item
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *item, QWidget *widget); // Método para desenhar o item
     void updatePosition(); // Método para atualizar a posição do item
+    CircuitItem* getSrc(); // Metodo para retornar o ponteiro para a origem do conector
+    CircuitItem* getDst(); // Metodo para retornar o ponteiro para a saida do conector
 
-    // fazer gets para esses caras posteriormente
-    CircuitItem *src, *dst; // Ponteiros para os itens de origem e destino
 
 protected:
            // void mousePressEvent(QGraphicsSceneMouseEvent *event);
@@ -44,6 +44,7 @@ private:
     QLineF centerLine; // Linha central do item
     QLineF borderVector; // Vetor de borda do item
     QPointF borderPoint; // Ponto de borda do item
+    CircuitItem *src, *dst; // Ponteiros para os itens de origem e destino
 };
 
 #endif

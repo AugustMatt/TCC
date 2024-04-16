@@ -25,15 +25,12 @@ public:
     void addInputConnector(Connector *connector); // Adiciona um conector de entrada ao item
     void addOutputConnector(Connector *connector); // Adiciona um conector de saída ao item
     int nInputs(); // Retorna o número de entradas do item
+    QList<Connector *> getInputConnectors(); // Retornar a lista de conectores de entrada
 
-    //fazer funções de get posterioemente para esses
-    QString itemType; // Tipo do item
-    QList<Connector *> inputConnectors, outputConnectors; // Lista de conectores de entrada e saída do item
-    // --
-
+    // Variaveis do openCv
     cv::Mat image; // Matriz de armazenamento da imagem (OpenCV)
 
-    // Tipo de cor para laod image
+    // Padrão de cor para bloco laod image
     QString colorPattern() const;
     void setColorPattern(const QString &pattern);
 
@@ -45,6 +42,8 @@ private:
     int id; // ID do item
     int textWidthinPixels; // Largura do texto em pixels
     int textHeightinPixels; // Altura do texto em pixels
+    QString itemType; // Tipo do item
+    QList<Connector *> inputConnectors, outputConnectors; // Lista de conectores de entrada e saída do item
 
     QString m_colorPattern;
 

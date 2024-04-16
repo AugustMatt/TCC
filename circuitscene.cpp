@@ -174,7 +174,7 @@ void CircuitScene::openSelectedItemSettingsWindow()
         return;
     }
 
-    if (selectedItem->itemType.compare(QString("LOADIMAGE")) == 0)
+    if (selectedItem->getType().compare(QString("LOADIMAGE")) == 0)
     {
         // Cria uma janela de diálogo para as configurações
         QDialog dialog;
