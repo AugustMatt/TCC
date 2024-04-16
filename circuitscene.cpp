@@ -11,6 +11,8 @@
 #include <QLabel>
 #include <QComboBox>
 #include <QPushButton>
+#include <QMessageBox>
+#include <QApplication>
 
 CircuitScene::CircuitScene(QObject *parent) :
     QGraphicsScene(parent) // Construtor da classe CircuitScene
@@ -95,7 +97,7 @@ void CircuitScene::mouseReleaseEvent(QGraphicsSceneMouseEvent *event){
 
             // Verifica se o endItem é do tipo LoadImage, este não pode ter entradas
             if (endItem->getType() == "LOADIMAGE") {
-                qDebug() << "O LoadImage não pode ter entradas.";
+                QMessageBox::information(nullptr, "Aviso", "Load Image não pode conter entradas!");
                 delete conector; // Remove o conector criado
                 QGraphicsScene::mouseReleaseEvent(event); // Chama a implementação padrão do evento de liberação do mouse na cena
                 return;
@@ -103,7 +105,7 @@ void CircuitScene::mouseReleaseEvent(QGraphicsSceneMouseEvent *event){
 
             // Verifica se o endItem é do tipo ShowImage e já possui uma entrada conectada. So pode ter no maximo uma entrada
             else if (endItem->getType() == "SHOWIMAGE" && endItem->getInputConnectors().size() >= 1) {
-                qDebug() << "Um ShowImage só pode ter no máximo uma entrada.";
+                QMessageBox::information(nullptr, "Aviso", "Show Image so pode conter uma entrada!");
                 delete conector; // Remove o conector criado
                 QGraphicsScene::mouseReleaseEvent(event); // Chama a implementação padrão do evento de liberação do mouse na cena
                 return;
@@ -111,7 +113,7 @@ void CircuitScene::mouseReleaseEvent(QGraphicsSceneMouseEvent *event){
 
             // Verifica se o start item é do tipo ShowImage. Este não podera ser uma entrada
             else if (startItem->getType() == "SHOWIMAGE") {
-                qDebug() << "Show image não pode ser um bloco de entrada";
+                QMessageBox::information(nullptr, "Aviso", "Show image não pode ser um bloco de entrada!");
                 delete conector; // Remove o conector criado
                 QGraphicsScene::mouseReleaseEvent(event); // Chama a implementação padrão do evento de liberação do mouse na cena
                 return;
@@ -232,6 +234,7 @@ void CircuitScene::openSelectedItemSettingsWindow()
         {
             QString selectedPattern = colorSelector->currentText();
             selectedItem->setColorPattern(selectedPattern);
+            QMessageBox::information(nullptr, "Aviso", "Alterações realidas! Por favor, execute o bloco novamente para aplica-las");
         }
     }
     else
@@ -250,23 +253,29 @@ void CircuitScene::keyPressEvent(QKeyEvent *event) {
 
             if (item->type() == Connector::Type) {
 
-                Connector *connector = qgraphicsitem_cast<Connector *>(item);
+                // Pergunta ao usuário se deseja realmente deletar o conector
+                QMessageBox::StandardButton reply = QMessageBox::question(QApplication::activeWindow(), "Confirmar Deleção", "Tem certeza de que deseja deletar o conector selecionado?", QMessageBox::Yes | QMessageBox::No);
 
-                if (connector) {
+                if (reply == QMessageBox::Yes) {
 
-                    // Remover o conector das listas de entrada e saída dos itens de origem e destino
-                    CircuitItem *srcItem = connector->getSrc();
-                    CircuitItem *dstItem = connector->getDst();
+                    Connector *connector = qgraphicsitem_cast<Connector *>(item);
 
-                    if (srcItem)
-                        srcItem->removeOutputConnector(connector);
+                    if (connector) {
 
-                    if (dstItem)
-                        dstItem->removeInputConnector(connector);
+                        // Remover o conector das listas de entrada e saída dos itens de origem e destino
+                        CircuitItem *srcItem = connector->getSrc();
+                        CircuitItem *dstItem = connector->getDst();
 
-                    // Remover o conector da cena
-                    removeItem(connector);
-                    delete connector;
+                        if (srcItem)
+                            srcItem->removeOutputConnector(connector);
+
+                        if (dstItem)
+                            dstItem->removeInputConnector(connector);
+
+                        // Remover o conector da cena
+                        removeItem(connector);
+                        delete connector;
+                    }
                 }
             }
         }

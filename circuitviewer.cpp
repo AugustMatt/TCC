@@ -7,6 +7,7 @@
 #include <opencv2/opencv.hpp>
 #include <QImage>
 #include <QDebug>
+#include <QMessageBox>
 
 CircuitViewer::CircuitViewer(QWidget *parent) :
     QGraphicsView(parent) // Construtor da classe CircuitViewer
@@ -59,16 +60,16 @@ void CircuitViewer::play()
                         qDebug() << "Sem imagem para mostrar";
                     }
                 } else {
-                    qDebug() << "Sem conexão no SHOWIMAGE";
+                    QMessageBox::information(nullptr, "Aviso", "Show image não possui entrada para exibir!");
                 }
             } else {
-                qDebug() << "Função não implementada.";
+                QMessageBox::information(nullptr, "Aviso", "Função não implementada!");
             }
         } else {
-            qDebug() << "Item selecionado não é um CircuitItem.";
+            QMessageBox::information(nullptr, "Aviso", "Item selecionado não é um CircuitItem!");
         }
     } else {
-        qDebug() << "Nenhum item selecionado.";
+        QMessageBox::information(nullptr, "Aviso", "Nenhum item selecionado!");
     }
 }
 
@@ -107,10 +108,7 @@ void CircuitViewer::openImageFileDialog() {
                         return;
                     }
 
-                    qDebug() << "Imagem atualizada no LOADIMAGE";
-                    //cv::namedWindow("Imagem Selecionada", cv::WINDOW_NORMAL); // Cria uma janela com tamanho personalizado
-                    //cv::imshow("Imagem Selecionada", circuitItem->image); // Exibe a imagem na janela
-                    //cv::waitKey(0); // Espera até que uma tecla seja pressionada
+                    QMessageBox::information(nullptr, "Aviso", "Imagem Carregada!");
                 } else {
                     qDebug() << "Erro ao carregar a imagem.";
                 }
