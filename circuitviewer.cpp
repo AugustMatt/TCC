@@ -46,9 +46,13 @@ void CircuitViewer::play()
         CircuitItem *circuitItem = qgraphicsitem_cast<CircuitItem *>(selectedItem);
 
         if (circuitItem) {
+
             if (circuitItem->getType().compare(QString("LOADIMAGE")) == 0) {
                 openImageFileDialog();
-            } else if (circuitItem->getType().compare(QString("SHOWIMAGE")) == 0) {
+            }
+
+            else if (circuitItem->getType().compare(QString("SHOWIMAGE")) == 0) {
+
                 if (!circuitItem->getInputConnectors().isEmpty()) {
                     if (!circuitItem->getInputConnectors()[0]->getSrc()->image.empty()) {
                         QString windowName = "Imagem_" + QString::number(reinterpret_cast<std::uintptr_t>(circuitItem));
@@ -62,7 +66,67 @@ void CircuitViewer::play()
                 } else {
                     QMessageBox::information(nullptr, "Aviso", "Show image não possui entrada para exibir!");
                 }
-            } else {
+            }
+
+            else if (circuitItem->getType().compare(QString("CONVOLUTION")) == 0) {
+
+                QList<Connector*> inputConnectors = circuitItem->getInputConnectors();
+
+                if (inputConnectors.size() == 2) {
+
+                    CircuitItem* loadItemImage = inputConnectors[0]->getSrc();
+                    CircuitItem* kernelItem = inputConnectors[1]->getSrc();
+
+                    // verificação da ordem dos inputs trocadas
+                    if(loadItemImage->getType().compare(QString("KERNEL")) == 0){
+                        CircuitItem* aux = loadItemImage;
+                        loadItemImage = kernelItem;
+                        kernelItem = aux;
+                    }
+
+                    if (loadItemImage && kernelItem) {
+
+                        cv::Mat image = loadItemImage->image;
+                        QVector<QVector<float>> convolutionKernel = kernelItem->getMatrix();
+
+
+                        // Verificar se a imagem e a matriz de convolução são válidas
+                        if (!image.empty() && !convolutionKernel.isEmpty()) {
+
+                            cv::Mat resultImage;
+
+                            // conversão do kernel para o tipo correto
+                            cv::Mat kernelMat(convolutionKernel.size(), convolutionKernel[0].size(), CV_32F);
+                            for (int i = 0; i < convolutionKernel.size(); ++i) {
+                                for (int j = 0; j < convolutionKernel[i].size(); ++j) {
+                                    kernelMat.at<float>(i, j) = convolutionKernel[i][j];
+                                }
+                            }
+
+                            // ajuste do fator de divisibilidade
+                            float fator = kernelItem->getDivisibility();
+                            kernelMat /= fator;
+
+                            cv::filter2D(image, resultImage, -1, kernelMat);
+
+                            // Atualizar a imagem do bloco CONVOLUTION com o resultado da convolução
+                            circuitItem->image = resultImage;
+                            QMessageBox::information(nullptr, "Aviso", "Convolução realizada com sucesso!");
+                        }
+
+                        else {
+                            QMessageBox::critical(nullptr, "Aviso", "Imagem ou matriz de convolução invalida!");
+                        }
+                    } else {
+                        QMessageBox::critical(nullptr, "Aviso", "Conectores da convolução invalidos!");
+                    }
+
+                } else {
+                    QMessageBox::critical(nullptr, "Aviso", "Numero de conectores da convolução invalidos!");
+                }
+            }
+
+            else {
                 QMessageBox::information(nullptr, "Aviso", "Função não implementada!");
             }
         } else {

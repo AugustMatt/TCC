@@ -31,10 +31,14 @@ public:
 
     // Variaveis do openCv
     cv::Mat image; // Matriz de armazenamento da imagem (OpenCV)
+    QString colorPattern() const; // Método para retornar o padrão de cor no laod image
+    void setColorPattern(const QString &pattern); // Metodo para alterar o padrão de cor no load image
 
-    // Padrão de cor para bloco laod image
-    QString colorPattern() const;
-    void setColorPattern(const QString &pattern);
+    void setMatrix(const QVector<QVector<float>>& mat); // Método para definir a matriz
+    QVector<QVector<float>> getMatrix() const; // Método para obter a matriz
+    void setDivisibility(float div); // Método para definir a divisibilidade
+    float getDivisibility() const; // Método para obter a divisibilidade
+
 
 private:
     QString itemName; // Nome do item
@@ -47,7 +51,10 @@ private:
     QString itemType; // Tipo do item
     QList<Connector *> inputConnectors, outputConnectors; // Lista de conectores de entrada e saída do item
 
-    QString m_colorPattern;
+    // Variaveis do opencv
+    QString m_colorPattern; // Padrão de cor no load image
+    QVector<QVector<float>> convolutionKernel; // Matriz para armazenar os valores de uma convolução
+    float divisibility = 1.0; // Número para dividir todos os elementos da matriz
 
 
 };

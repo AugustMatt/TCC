@@ -13,8 +13,8 @@ CircuitItem::CircuitItem(QString _itemType){ // Implementação do construtor da
     itemName = itemType; // Inicializa o nome do item com o tipo do item
     rec = rec+itemType; // Concatena o tipo do item à string com dois pontos
     svgrenderer = new QSvgRenderer(rec); // Cria um novo renderizador SVG com o nome do arquivo SVG
-    width =70; // Define a largura do item como 65 pixels
-    height = 70; // Define a altura do item como 65 pixels
+    width =85; // Define a largura do item como 65 pixels
+    height = 85; // Define a altura do item como 65 pixels
     rect.setRect(0,0,width,height); // Define o retângulo delimitador do item
 
     // Inicialização padrão para ler imagem em RGG no load image
@@ -41,7 +41,9 @@ void CircuitItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *optio
         itemType.compare(QString("INPUT"))==0
         || itemType.compare(QString("OUTPUT"))==0
         || itemType.compare(QString("LOADIMAGE"))==0
-        || itemType.compare(QString("SHOWIMAGE"))==0)
+        || itemType.compare(QString("SHOWIMAGE"))==0
+        || itemType.compare(QString("KERNEL"))==0
+        || itemType.compare(QString("CONVOLUTION"))==0)
     { // Verifica se o tipo do item é INPUT ou OUTPUT
         rect=textRect; // Atualiza o retângulo do item para incluir o texto
     }
@@ -55,12 +57,13 @@ void CircuitItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *optio
         svgrenderer->render(painter, imageRect); // Renderiza o SVG no pintor na posição especificada
     }
 
-    // Texto esta bugando
     if(
         itemType.compare(QString("INPUT"))==0
         || itemType.compare(QString("OUTPUT"))==0
         || itemType.compare(QString("LOADIMAGE"))==0
-        || itemType.compare(QString("SHOWIMAGE"))==0)
+        || itemType.compare(QString("SHOWIMAGE"))==0
+        || itemType.compare(QString("KERNEL"))==0
+        || itemType.compare(QString("CONVOLUTION"))==0)
     { // Verifica se o tipo do item é INPUT ou OUTPUT
         painter->drawText(textRect,Qt::AlignBottom|Qt::AlignHCenter,itemName); // Desenha o texto no retângulo de texto
     }
@@ -94,7 +97,9 @@ QRectF CircuitItem::boundingRect() const{ // Implementação do método para obt
         itemType.compare(QString("INPUT"))==0
         || itemType.compare(QString("OUTPUT"))==0
         || itemType.compare(QString("LOADIMAGE"))==0
-        || itemType.compare(QString("SHOWIMAGE"))==0){ // Verifica se o tipo do item é INPUT ou OUTPUT
+        || itemType.compare(QString("SHOWIMAGE"))==0
+        || itemType.compare(QString("KERNEL"))==0
+        || itemType.compare(QString("CONVOLUTION"))==0){ // Verifica se o tipo do item é INPUT ou OUTPUT
         return QRectF(0,0,width,height+textHeightinPixels); // Retorna o retângulo que inclui o texto
     }
     return QRectF(0,0,width,height); // Retorna o retângulo sem o texto
@@ -150,4 +155,20 @@ void CircuitItem::removeInputConnector(Connector *connector) {
 
 void CircuitItem::removeOutputConnector(Connector *connector) {
     outputConnectors.removeOne(connector);
+}
+
+void CircuitItem::setMatrix(const QVector<QVector<float>>& mat) {
+    convolutionKernel = mat;
+}
+
+QVector<QVector<float>> CircuitItem::getMatrix() const {
+    return convolutionKernel;
+}
+
+void CircuitItem::setDivisibility(float div) {
+    divisibility = div;
+}
+
+float CircuitItem::getDivisibility() const {
+    return divisibility;
 }

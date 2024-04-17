@@ -14,5 +14,7 @@
         <file alias="LOADIMAGE">resources/loadImage.svg</file>
         <file alias="SHOWIMAGE">resources/showImage.svg</file>
         <file alias="PLAY">resources/play.svg</file>
+        <file alias="KERNEL">resources/kernel.svg</file>
+        <file alias="CONVOLUTION">resources/convolution.svg</file>
     </qresource>
 </RCC>

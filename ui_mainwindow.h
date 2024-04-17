@@ -35,6 +35,8 @@ public:
     QAction *actionNAND;
     QAction *actionLoadImage;
     QAction *actionShowImage;
+    QAction *actionConvolutionKernel;
+    QAction *actionConvolution;
     QAction *actionPOINT;
     QAction *actionLINE;
     QAction *actionSAVE;
@@ -114,6 +116,18 @@ public:
         iconShowImage.addFile(QString::fromUtf8(":/SHOWIMAGE"), QSize(), QIcon::Normal, QIcon::Off);
         actionShowImage->setIcon(iconShowImage);
 
+        actionConvolutionKernel = new QAction(MainWindow);
+        actionConvolutionKernel->setObjectName("actionKERNEL");
+        QIcon iconConvolutionKernel;
+        iconConvolutionKernel.addFile(QString::fromUtf8(":/KERNEL"), QSize(), QIcon::Normal, QIcon::Off);
+        actionConvolutionKernel->setIcon(iconConvolutionKernel);
+
+        actionConvolution = new QAction(MainWindow);
+        actionConvolution->setObjectName("actionCONVOLUTION");
+        QIcon iconConvolution;
+        iconConvolution.addFile(QString::fromUtf8(":/CONVOLUTION"), QSize(), QIcon::Normal, QIcon::Off);
+        actionConvolution->setIcon(iconConvolution);
+
         actionPOINT = new QAction(MainWindow);
         actionPOINT->setObjectName("actionPOINT");
         actionPOINT->setCheckable(true);
@@ -177,6 +191,7 @@ public:
         pointerToolbar = new QToolBar(MainWindow);
         pointerToolbar->setObjectName("pointerToolbar");
         MainWindow->addToolBar(Qt::TopToolBarArea, pointerToolbar);
+
         /*
         gatesToolbar->addAction(actionINPUT);
         gatesToolbar->addAction(actionOUTPUT);
@@ -189,6 +204,9 @@ public:
         */
         gatesToolbar->addAction(actionLoadImage);
         gatesToolbar->addAction(actionShowImage);
+        gatesToolbar->addAction(actionConvolutionKernel);
+        gatesToolbar->addAction(actionConvolution);
+
         pointerToolbar->addAction(actionPOINT);
         pointerToolbar->addAction(actionLINE);
         pointerToolbar->addAction(actionSAVE);
@@ -234,10 +252,14 @@ public:
         actionNAND->setText(QCoreApplication::translate("MainWindow", "NAND", nullptr));
         actionLoadImage->setText(QCoreApplication::translate("MainWindow", "LOADIMAGE", nullptr));
         actionShowImage->setText(QCoreApplication::translate("MainWindow", "SHOWIMAGE", nullptr));
+        actionConvolutionKernel->setText(QCoreApplication::translate("MainWindow", "KERNEL", nullptr));
+        actionConvolution->setText(QCoreApplication::translate("MainWindow", "CONVOLUTION", nullptr));
 #if QT_CONFIG(tooltip)
         actionNAND->setToolTip(QCoreApplication::translate("MainWindow", "NAND", nullptr));
         actionLoadImage->setToolTip(QCoreApplication::translate("MainWindow", "LoadImage", nullptr));
         actionShowImage->setToolTip(QCoreApplication::translate("MainWindow", "ShowImage", nullptr));
+        actionConvolutionKernel->setToolTip(QCoreApplication::translate("MainWindow", "ConvolutionKernel", nullptr));
+        actionConvolution->setToolTip(QCoreApplication::translate("MainWindow", "Convolution", nullptr));
 #endif // QT_CONFIG(tooltip)
         actionPOINT->setText(QCoreApplication::translate("MainWindow", "POINT", nullptr));
 #if QT_CONFIG(tooltip)

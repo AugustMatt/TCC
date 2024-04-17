@@ -13,6 +13,7 @@
 #include <QPushButton>
 #include <QMessageBox>
 #include <QApplication>
+#include <QLineEdit>
 
 CircuitScene::CircuitScene(QObject *parent) :
     QGraphicsScene(parent) // Construtor da classe CircuitScene
@@ -189,6 +190,36 @@ void CircuitScene::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event)
     }
 }
 
+// Função para preencher os campos da matriz quando o bloco de kernel for clicado duas vezes
+void fillMatrixFields(QGridLayout *matrixLayout, QVector<QVector<QLineEdit *>> &matrixFields, const QVector<QVector<float>> &convolutionKernel)
+{
+    int matrixSize = convolutionKernel.size();
+
+    // Limpa os campos antigos
+    for (int i = 0; i < matrixFields.size(); ++i)
+    {
+        for (int j = 0; j < matrixFields[i].size(); ++j)
+        {
+            delete matrixFields[i][j];
+        }
+    }
+    matrixFields.clear();
+
+    // Adiciona novos campos com os valores da convolutionKernel
+    for (int i = 0; i < matrixSize; ++i)
+    {
+        QVector<QLineEdit *> rowFields;
+        for (int j = 0; j < matrixSize; ++j)
+        {
+            QLineEdit *lineEdit = new QLineEdit(QString::number(convolutionKernel[i][j]));
+            lineEdit->setMaximumWidth(50); // Define a largura máxima do campo de entrada
+            rowFields.append(lineEdit);
+            matrixLayout->addWidget(lineEdit, i, j);
+        }
+        matrixFields.append(rowFields);
+    }
+}
+
 void CircuitScene::openSelectedItemSettingsWindow()
 {
     // Verifica se há um item selecionado na cena
@@ -234,7 +265,136 @@ void CircuitScene::openSelectedItemSettingsWindow()
         {
             QString selectedPattern = colorSelector->currentText();
             selectedItem->setColorPattern(selectedPattern);
-            QMessageBox::information(nullptr, "Aviso", "Alterações realidas! Por favor, execute o bloco novamente para aplica-las");
+            QMessageBox::information(nullptr, "Aviso", "Alterações realizadas! Por favor, execute o bloco novamente para aplica-las");
+        }
+    }
+    else if (selectedItem->getType().compare(QString("KERNEL")) == 0)
+    {
+        // Cria uma janela de diálogo para as configurações do Kernel
+        QDialog dialog;
+        dialog.setWindowTitle("Configurações do Kernel");
+
+        // Adiciona um layout à janela
+        QVBoxLayout *layout = new QVBoxLayout(&dialog);
+
+        // Adiciona um rótulo e um seletor de tamanho da matriz ao layout
+        QLabel *sizeLabel = new QLabel("Tamanho da Matriz:");
+        layout->addWidget(sizeLabel);
+
+        QComboBox *sizeSelector = new QComboBox;
+        sizeSelector->addItem("3x3"); // Adiciona as outras opções
+        sizeSelector->addItem("5x5");
+        layout->addWidget(sizeSelector);
+
+        // Adiciona um rótulo e um campo de entrada para o fator de divisibilidade ao layout
+        QLabel *divisibilityLabel = new QLabel("Fator de Divisibilidade:");
+        layout->addWidget(divisibilityLabel);
+
+        QLineEdit *divisibilityLineEdit = new QLineEdit("1.0"); // Valor padrão é 1.0
+        layout->addWidget(divisibilityLineEdit);
+
+        // Adiciona campos para inserção dos valores da matriz
+        QLabel *matrixValuesLabel = new QLabel("Valores da Matriz:");
+        layout->addWidget(matrixValuesLabel);
+
+        QGridLayout *matrixLayout = new QGridLayout;
+        QVector<QVector<QLineEdit *>> matrixFields;
+
+        int selectedSizeIndex = 0; // Índice padrão selecionado se não houver valores em convolutionKernel
+        QVector<QVector<float>> convolutionKernel = selectedItem->getMatrix(); // Obtém a matriz atual do bloco Kernel
+
+        // Verifica se ja existe valores armazenados no kernel
+        if (!convolutionKernel.isEmpty())
+        {
+            // Preenche os campos da matriz com os valores do kernel
+            fillMatrixFields(matrixLayout, matrixFields, convolutionKernel);
+
+            // Obtém o tamanho da matriz para pre-selecionar a opção correta no seletor de tamanho
+            int matrixSize = convolutionKernel.size();
+
+            if (matrixSize == 3)
+            {
+                selectedSizeIndex = 0; // Índice da opção "3x3"
+            }
+            else if (matrixSize == 5)
+            {
+                selectedSizeIndex = 1; // Índice da opção "5x5"
+            }
+        }
+
+        else
+        {
+            // Preenche os campos da matriz com valores padrão (0.0)
+            fillMatrixFields(matrixLayout, matrixFields, {{0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}});
+        }
+
+        // Preenche o fator de divisibilidade
+        divisibilityLineEdit->setText(QString::number(selectedItem->getDivisibility()));
+
+        // Seleciona o valor no seletor de tamanho da matriz
+        sizeSelector->setCurrentIndex(selectedSizeIndex);
+
+        layout->addLayout(matrixLayout);
+
+        // Conecta o seletor de tamanho à função de preenchimento dos campos da matriz
+        connect(sizeSelector, QOverload<int>::of(&QComboBox::activated), [matrixLayout, &matrixFields, &selectedItem](int index) {
+            QVector<QVector<float>> defaultMatrix;
+            if (index == 0)
+            {
+                defaultMatrix = {{0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}};
+            }
+            else if (index == 1)
+            {
+                defaultMatrix = {{0.0, 0.0, 0.0, 0.0, 0.0}, {0.0, 0.0, 0.0, 0.0, 0.0}, {0.0, 0.0, 0.0, 0.0, 0.0}, {0.0, 0.0, 0.0, 0.0, 0.0}, {0.0, 0.0, 0.0, 0.0, 0.0}};
+            }
+
+            fillMatrixFields(matrixLayout, matrixFields, defaultMatrix);
+        });
+
+        // Adiciona um botão "OK" à janela
+        QPushButton *okButton = new QPushButton("OK");
+        layout->addWidget(okButton);
+
+        // Conecta o botão "OK" ao slot de aceitação da janela
+        connect(okButton, &QPushButton::clicked, &dialog, &QDialog::accept);
+
+        // Exibe a janela de configurações
+        if (dialog.exec() == QDialog::Accepted)
+        {
+            QString selectedSize = sizeSelector->currentText();
+
+            // Adquire os valores da matriz dados pelo usuario
+            QVector<QVector<float>> updatedKernelMatrix;
+            for (int i = 0; i < matrixFields.size(); ++i)
+            {
+                QVector<float> rowValues;
+                for (int j = 0; j < matrixFields[i].size(); ++j)
+                {
+                    QString valueStr = matrixFields[i][j]->text();
+                    float value = valueStr.toFloat();
+                    rowValues.append(value);
+                }
+                updatedKernelMatrix.append(rowValues);
+            }
+
+
+            // Lê o valor do campo de divisibilidade
+            QString divisibilityStr = divisibilityLineEdit->text();
+            bool ok;
+            float divisibility = divisibilityStr.toFloat(&ok);
+
+            if (!ok) {
+                QMessageBox::warning(&dialog, "Aviso", "Valor de divisibilidade inválido!");
+                return;
+            }
+
+            // Atualiza a variavel que guarda os valores da matrix
+            selectedItem->setMatrix(updatedKernelMatrix);
+
+            // Atualiza o fator de divisibilidade
+            selectedItem->setDivisibility(divisibility);
+
+            QMessageBox::information(nullptr, "Aviso", "Configurações do Kernel atualizadas!");
         }
     }
     else

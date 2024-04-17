@@ -3,6 +3,8 @@
 
 #include <QGraphicsScene> // Inclui a biblioteca QGraphicsScene para gerenciar uma cena gráfica
 #include <conector.h>
+#include <QGridLayout>
+#include <QLineEdit>
 
 class CircuitItem; // Declaração antecipada da classe CircuitItem para evitar dependências circulares
 
@@ -15,6 +17,7 @@ public:
     explicit CircuitScene(QObject *parent = 0); // Construtor da classe CircuitScene
     bool isItemChange(int type); // Verifica se houve alteração em um tipo de item específico
     int record(QString filename); // Grava a cena em um arquivo especificado
+
 
 public slots: // Definição de slots da classe
     void mousePressEvent(QGraphicsSceneMouseEvent *event) override; // Slot para lidar com eventos de clique do mouse
