@@ -98,7 +98,8 @@ void CircuitScene::mouseReleaseEvent(QGraphicsSceneMouseEvent *event){
 
             // Verifica se o endItem é do tipo LoadImage, este não pode ter entradas
             if (endItem->getType() == "LOADIMAGE") {
-                QMessageBox::information(nullptr, "Aviso", "Load Image não pode conter entradas!");
+                qDebug() << "Load Image não pode conter entradas!";
+                //QMessageBox::information(nullptr, "Aviso", "Load Image não pode conter entradas!");
                 delete conector; // Remove o conector criado
                 QGraphicsScene::mouseReleaseEvent(event); // Chama a implementação padrão do evento de liberação do mouse na cena
                 return;
@@ -106,7 +107,8 @@ void CircuitScene::mouseReleaseEvent(QGraphicsSceneMouseEvent *event){
 
             // Verifica se o endItem é do tipo ShowImage e já possui uma entrada conectada. So pode ter no maximo uma entrada
             else if (endItem->getType() == "SHOWIMAGE" && endItem->getInputConnectors().size() >= 1) {
-                QMessageBox::information(nullptr, "Aviso", "Show Image so pode conter uma entrada!");
+                qDebug() << "Show Image so pode conter uma entrada!";
+                //QMessageBox::information(nullptr, "Aviso", "Show Image so pode conter uma entrada!");
                 delete conector; // Remove o conector criado
                 QGraphicsScene::mouseReleaseEvent(event); // Chama a implementação padrão do evento de liberação do mouse na cena
                 return;
@@ -114,7 +116,8 @@ void CircuitScene::mouseReleaseEvent(QGraphicsSceneMouseEvent *event){
 
             // Verifica se o start item é do tipo ShowImage. Este não podera ser uma entrada
             else if (startItem->getType() == "SHOWIMAGE") {
-                QMessageBox::information(nullptr, "Aviso", "Show image não pode ser um bloco de entrada!");
+                qDebug() << "Show image não pode ser um bloco de entrada!";
+                //QMessageBox::information(nullptr, "Aviso", "Show image não pode ser um bloco de entrada!");
                 delete conector; // Remove o conector criado
                 QGraphicsScene::mouseReleaseEvent(event); // Chama a implementação padrão do evento de liberação do mouse na cena
                 return;
@@ -384,7 +387,8 @@ void CircuitScene::openSelectedItemSettingsWindow()
             float divisibility = divisibilityStr.toFloat(&ok);
 
             if (!ok) {
-                QMessageBox::warning(&dialog, "Aviso", "Valor de divisibilidade inválido!");
+                qDebug() << "Valor de divisibilidade inválido!";
+                //QMessageBox::warning(&dialog, "Aviso", "Valor de divisibilidade inválido!");
                 return;
             }
 
@@ -394,7 +398,8 @@ void CircuitScene::openSelectedItemSettingsWindow()
             // Atualiza o fator de divisibilidade
             selectedItem->setDivisibility(divisibility);
 
-            QMessageBox::information(nullptr, "Aviso", "Configurações do Kernel atualizadas!");
+            qDebug() << "Configurações do Kernel atualizadas!";
+            //QMessageBox::information(nullptr, "Aviso", "Configurações do Kernel atualizadas!");
         }
     }
     else
@@ -413,30 +418,53 @@ void CircuitScene::keyPressEvent(QKeyEvent *event) {
 
             if (item->type() == Connector::Type) {
 
+                Connector *connector = qgraphicsitem_cast<Connector *>(item);
+
+                if (connector) {
+
+                    // Remover o conector das listas de entrada e saída dos itens de origem e destino
+                    CircuitItem *srcItem = connector->getSrc();
+                    CircuitItem *dstItem = connector->getDst();
+
+                    if (srcItem)
+                        srcItem->removeOutputConnector(connector);
+
+                    if (dstItem)
+                        dstItem->removeInputConnector(connector);
+
+                    // Remover o conector da cena
+                    removeItem(connector);
+                    delete connector;
+                }
+
                 // Pergunta ao usuário se deseja realmente deletar o conector
+
+                /*
+
                 QMessageBox::StandardButton reply = QMessageBox::question(QApplication::activeWindow(), "Confirmar Deleção", "Tem certeza de que deseja deletar o conector selecionado?", QMessageBox::Yes | QMessageBox::No);
 
                 if (reply == QMessageBox::Yes) {
 
-                    Connector *connector = qgraphicsitem_cast<Connector *>(item);
+                  Connector *connector = qgraphicsitem_cast<Connector *>(item);
 
-                    if (connector) {
+                  if (connector) {
 
-                        // Remover o conector das listas de entrada e saída dos itens de origem e destino
-                        CircuitItem *srcItem = connector->getSrc();
-                        CircuitItem *dstItem = connector->getDst();
+                    // Remover o conector das listas de entrada e saída dos
+                    // itens de origem e destino
+                    CircuitItem *srcItem = connector->getSrc();
+                    CircuitItem *dstItem = connector->getDst();
 
-                        if (srcItem)
-                            srcItem->removeOutputConnector(connector);
+                    if (srcItem)
+                      srcItem->removeOutputConnector(connector);
 
-                        if (dstItem)
-                            dstItem->removeInputConnector(connector);
+                    if (dstItem)
+                      dstItem->removeInputConnector(connector);
 
-                        // Remover o conector da cena
-                        removeItem(connector);
-                        delete connector;
-                    }
-                }
+                    // Remover o conector da cena
+                    removeItem(connector);
+                    delete connector;
+                  }
+                }*/
             }
         }
     } else {

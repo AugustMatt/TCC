@@ -64,7 +64,8 @@ void CircuitViewer::play()
                         qDebug() << "Sem imagem para mostrar";
                     }
                 } else {
-                    QMessageBox::information(nullptr, "Aviso", "Show image não possui entrada para exibir!");
+                    qDebug() << "Show image não possui entrada para exibir!";
+                    //QMessageBox::information(nullptr, "Aviso", "Show image não possui entrada para exibir!");
                 }
             }
 
@@ -111,29 +112,36 @@ void CircuitViewer::play()
 
                             // Atualizar a imagem do bloco CONVOLUTION com o resultado da convolução
                             circuitItem->image = resultImage;
-                            QMessageBox::information(nullptr, "Aviso", "Convolução realizada com sucesso!");
+                            qDebug() << "Convolução realizada com sucesso!";
+                            //QMessageBox::information(nullptr, "Aviso", "Convolução realizada com sucesso!");
                         }
 
                         else {
-                            QMessageBox::critical(nullptr, "Aviso", "Imagem ou matriz de convolução invalida!");
+                            qDebug() << "Imagem ou matriz de convolução invalida!";
+                            //QMessageBox::critical(nullptr, "Aviso", "Imagem ou matriz de convolução invalida!");
                         }
                     } else {
-                        QMessageBox::critical(nullptr, "Aviso", "Conectores da convolução invalidos!");
+                        qDebug() << "Conectores da convolução invalidos!";
+                        //QMessageBox::critical(nullptr, "Aviso", "Conectores da convolução invalidos!");
                     }
 
                 } else {
-                    QMessageBox::critical(nullptr, "Aviso", "Numero de conectores da convolução invalidos!");
+                    qDebug() << "Numero de conectores da convolução invalidos!";
+                    //QMessageBox::critical(nullptr, "Aviso", "Numero de conectores da convolução invalidos!");
                 }
             }
 
             else {
-                QMessageBox::information(nullptr, "Aviso", "Função não implementada!");
+                qDebug() << "Função não implementada!";
+                //QMessageBox::information(nullptr, "Aviso", "Função não implementada!");
             }
         } else {
-            QMessageBox::information(nullptr, "Aviso", "Item selecionado não é um CircuitItem!");
+            qDebug() << "Item selecionado não é um CircuitItem!";
+            //QMessageBox::information(nullptr, "Aviso", "Item selecionado não é um CircuitItem!");
         }
     } else {
-        QMessageBox::information(nullptr, "Aviso", "Nenhum item selecionado!");
+        qDebug() << "Nenhum item selecionado!";
+        //QMessageBox::information(nullptr, "Aviso", "Nenhum item selecionado!");
     }
 }
 
@@ -172,7 +180,9 @@ void CircuitViewer::openImageFileDialog() {
                         return;
                     }
 
-                    QMessageBox::information(nullptr, "Aviso", "Imagem Carregada!");
+                    qDebug() << "Imagem Carregada!";
+                    //QMessageBox::information(nullptr, "Aviso", "Imagem Carregada!");
+
                 } else {
                     qDebug() << "Erro ao carregar a imagem.";
                 }
